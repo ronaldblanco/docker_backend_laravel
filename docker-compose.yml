@@ -1,0 +1,95 @@
+version: '3.1'
+services:
+
+  #PHP Service
+  app:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    container_name: starter
+    restart: always
+    tty: true
+    environment:
+      SERVICE_NAME: starter
+      SERVICE_TAGS: dev
+    working_dir: /var/www
+    volumes:
+       - ./:/var/www
+       - ./docker/php/laravel.ini:/usr/local/etc/php/conf.d/laravel.ini
+       
+    networks:
+      - app-network
+
+  #Nginx Service
+  webserver:
+    image: nginx:latest
+    container_name: starter-webserver
+    restart: always
+    tty: true
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./:/var/www
+      - ./docker/nginx/conf.d/:/etc/nginx/conf.d/
+    networks:
+      - app-network
+
+  #MySQL Service
+  db:
+    image: mysql:latest
+    container_name: starter-db
+    #command: --default-authentication-plugin=mysql_native_password
+    restart: unless-stopped
+    tty: true
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_DATABASE: laravel
+      MYSQL_ROOT_PASSWORD: 123456
+      SERVICE_TAGS: dev
+      SERVICE_NAME: mysql
+    volumes:
+      - dbdata:/var/lib/mysql
+      - ./docker/mysql/my.cnf:/etc/mysql/my.cnf
+    networks:
+      - app-network
+
+  #adminer for db access
+  # adminer:
+  #   container_name: starter-db-adminer
+  #   image: adminer:latest
+  #   restart: unless-stopped
+  #   ports:
+  #     - 8080:8080
+
+  # #Redis Service
+  redis:
+    container_name: starter-redis
+    image: 'redis:latest'
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+    ports:
+      - "6379"
+    networks:
+      - app-network
+
+  # #Memcached Service
+  # memcached:
+  #   container_name: app-memcached
+  #   image: memcached:latest
+  #   ports:
+  #     - "11211:11211"
+  #   networks:
+  #     - app-network
+
+#Docker Networks
+networks:
+  app-network:
+    driver: bridge
+
+#Volumes
+volumes:
+  dbdata:
+    driver: local 
+
