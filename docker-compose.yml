@@ -36,24 +36,24 @@ services:
       - app-network
 
   #MySQL Service
-  db:
-    image: mysql:latest
-    container_name: starter-db
-    #command: --default-authentication-plugin=mysql_native_password
-    restart: unless-stopped
-    tty: true
-    ports:
-      - "3306:3306"
-    environment:
-      MYSQL_DATABASE: laravel
-      MYSQL_ROOT_PASSWORD: 123456
-      SERVICE_TAGS: dev
-      SERVICE_NAME: mysql
-    volumes:
-      - dbdata:/var/lib/mysql
-      - ./docker/mysql/my.cnf:/etc/mysql/my.cnf
-    networks:
-      - app-network
+  # db:
+  #   image: mysql:latest
+  #   container_name: starter-db
+  #   #command: --default-authentication-plugin=mysql_native_password
+  #   restart: unless-stopped
+  #   tty: true
+  #   ports:
+  #     - "3306:3306"
+  #   environment:
+  #     MYSQL_DATABASE: laravel
+  #     MYSQL_ROOT_PASSWORD: 123456
+  #     SERVICE_TAGS: dev
+  #     SERVICE_NAME: mysql
+  #   volumes:
+  #     - dbdata:/var/lib/mysql
+  #     - ./docker/mysql/my.cnf:/etc/mysql/my.cnf
+  #   networks:
+  #     - app-network
 
   #adminer for db access
   # adminer:
